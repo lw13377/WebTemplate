@@ -1,9 +1,11 @@
 'use client'
 
+import { useMemo } from 'react'
 import { AlignLeft } from 'lucide-react'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { SuggestionTextarea } from '@/components/ui/suggestion-textarea'
 import { useResume } from '@/hooks/use-resume'
+import { getSummaryTemplates } from '@/lib/suggestion-data'
 import { CollapsibleSection } from './collapsible-section'
 
 const MAX_CHARS = 2000
@@ -12,6 +14,12 @@ export function SummaryForm() {
   const { content, updateContent } = useResume()
   const summary = content.summary
 
+  const firstJobTitle = content.experience[0]?.title || ''
+  const templates = useMemo(
+    () => getSummaryTemplates(firstJobTitle),
+    [firstJobTitle]
+  )
+
   return (
     <CollapsibleSection
       title="Professional Summary"
@@ -19,22 +27,16 @@ export function SummaryForm() {
       defaultOpen
     >
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="summary">Summary</Label>
-          <span className="text-xs text-muted-foreground">
-            {summary.length} / {MAX_CHARS}
-          </span>
-        </div>
-        <Textarea
-          id="summary"
+        <Label htmlFor="summary">Summary</Label>
+        <SuggestionTextarea
           value={summary}
-          onChange={(e) => {
-            if (e.target.value.length <= MAX_CHARS) {
-              updateContent('summary', e.target.value)
-            }
-          }}
+          onChange={(val) => updateContent('summary', val)}
+          suggestions={templates}
           placeholder="A brief summary of your professional background, key skills, and career goals..."
-          className="min-h-[120px] resize-y"
+          className="min-h-[120px]"
+          maxChars={MAX_CHARS}
+          mode="replace"
+          label="Summary templates"
         />
       </div>
     </CollapsibleSection>

@@ -1,11 +1,12 @@
 'use client'
 
-import { useCallback } from 'react'
-import { Wrench, Plus, Trash2 } from 'lucide-react'
+import { useCallback, useMemo } from 'react'
+import { Lightbulb, Plus, Trash2, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useResume } from '@/hooks/use-resume'
+import { getSkillsForJob } from '@/lib/suggestion-data'
 import type { SkillCategory } from '@/types/resume'
 import { CollapsibleSection } from './collapsible-section'
 
@@ -52,6 +53,46 @@ export function SkillsForm() {
         'skills',
         skills.map((s) => (s.id === id ? { ...s, items } : s))
       )
+    },
+    [skills, updateContent]
+  )
+
+  // Compute suggested skills from all experience job titles
+  const suggestedSkills = useMemo(() => {
+    const allExisting = new Set(
+      skills.flatMap((s) => s.items.map((i) => i.toLowerCase()))
+    )
+    const suggested = new Set<string>()
+    for (const exp of content.experience) {
+      if (!exp.title) continue
+      for (const skill of getSkillsForJob(exp.title)) {
+        if (!allExisting.has(skill.toLowerCase())) {
+          suggested.add(skill)
+        }
+      }
+    }
+    return Array.from(suggested)
+  }, [content.experience, skills])
+
+  const addSuggestedSkill = useCallback(
+    (skillName: string) => {
+      if (skills.length === 0) {
+        // Create a new category
+        const newEntry: SkillCategory = {
+          id: crypto.randomUUID(),
+          category: 'Skills',
+          items: [skillName],
+        }
+        updateContent('skills', [newEntry])
+      } else {
+        // Add to first category
+        updateContent(
+          'skills',
+          skills.map((s, i) =>
+            i === 0 ? { ...s, items: [...s.items, skillName] } : s
+          )
+        )
+      }
     },
     [skills, updateContent]
   )
@@ -121,6 +162,29 @@ export function SkillsForm() {
             <Plus className="h-4 w-4" />
             Add Skill Category
           </Button>
+        </div>
+      )}
+
+      {/* Suggested Skills */}
+      {suggestedSkills.length > 0 && (
+        <div className="mt-4 rounded-md border bg-muted/30 p-3">
+          <div className="mb-2 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+            <Lightbulb className="h-3.5 w-3.5" />
+            Suggested skills based on your experience
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {suggestedSkills.map((skill) => (
+              <button
+                key={skill}
+                type="button"
+                onClick={() => addSuggestedSkill(skill)}
+                className="inline-flex items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-xs font-medium transition-colors hover:bg-accent"
+              >
+                <Plus className="h-3 w-3" />
+                {skill}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </CollapsibleSection>

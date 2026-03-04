@@ -91,6 +91,24 @@ export const FONT_OPTIONS = [
 ]
 
 export const COLOR_PRESETS = [
-  '#2563eb', '#dc2626', '#059669', '#7c3aed', '#ea580c', '#0891b2',
-  '#4f46e5', '#be185d', '#15803d', '#b45309', '#6366f1', '#334155',
+  '#1e3a5f', // Navy
+  '#2563eb', // Blue
+  '#3b82f6', // Light Blue
+  '#64748b', // Steel Blue
+  '#166534', // Forest Green
+  '#059669', // Emerald
+  '#0d9488', // Teal
+  '#7f1d1d', // Burgundy
+  '#dc2626', // Red
+  '#ea580c', // Orange
+  '#f97316', // Coral
+  '#d97706', // Amber
+  '#7c3aed', // Violet
+  '#4f46e5', // Indigo
+  '#e11d48', // Rose
+  '#334155', // Charcoal
+  '#78716c', // Warm Gray
+  '#a8a29e', // Stone
+  '#92400e', // Brown
+  '#1e293b', // Dark Slate
 ]

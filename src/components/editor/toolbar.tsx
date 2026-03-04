@@ -2,14 +2,12 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { HexColorPicker } from 'react-colorful'
 import {
   ArrowLeft,
   Check,
   CloudOff,
   Download,
   Loader2,
-  Palette,
 } from 'lucide-react'
 import { DownloadModal } from './download-modal'
 import { Button } from '@/components/ui/button'
@@ -30,6 +28,7 @@ import {
 } from '@/components/ui/tooltip'
 import { useResume } from '@/hooks/use-resume'
 import { FONT_OPTIONS, COLOR_PRESETS } from '@/types/resume'
+import { cn } from '@/lib/utils'
 
 const TEMPLATE_GROUPS = [
   {
@@ -115,7 +114,6 @@ export function Toolbar() {
     setFontFamily,
   } = useResume()
 
-  const [showColorPicker, setShowColorPicker] = useState(false)
   const [showDownload, setShowDownload] = useState(false)
 
   return (
@@ -152,7 +150,7 @@ export function Toolbar() {
         <DownloadModal open={showDownload} onOpenChange={setShowDownload} />
       </div>
 
-      {/* Bottom row: template, font, color */}
+      {/* Bottom row: template, font, color swatches */}
       <div className="flex flex-wrap items-center gap-2 border-t px-4 py-2">
         {/* Template Selector */}
         <Select value={templateId} onValueChange={setTemplateId}>
@@ -187,71 +185,25 @@ export function Toolbar() {
           </SelectContent>
         </Select>
 
-        {/* Color Picker */}
-        <div className="relative">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={() => setShowColorPicker(!showColorPicker)}
-                className="flex h-8 items-center gap-2 rounded-md border px-2.5 text-sm shadow-xs transition-colors hover:bg-accent"
-              >
-                <Palette className="h-3.5 w-3.5 text-muted-foreground" />
-                <div
-                  className="h-4 w-4 rounded-full border"
-                  style={{ backgroundColor: themeColor }}
-                />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>Theme Color</TooltipContent>
-          </Tooltip>
-
-          {showColorPicker && (
-            <>
-              {/* Backdrop */}
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setShowColorPicker(false)}
-              />
-              <div className="absolute left-0 top-full z-50 mt-2 rounded-lg border bg-popover p-3 shadow-lg">
-                {/* Preset Swatches */}
-                <div className="mb-3 grid grid-cols-6 gap-1.5">
-                  {COLOR_PRESETS.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setThemeColor(color)}
-                      className="group relative h-7 w-7 rounded-full border transition-transform hover:scale-110"
-                      style={{ backgroundColor: color }}
-                    >
-                      {themeColor === color && (
-                        <Check className="absolute inset-0 m-auto h-3.5 w-3.5 text-white drop-shadow" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-                {/* Custom Color Picker */}
-                <HexColorPicker
-                  color={themeColor}
-                  onChange={setThemeColor}
-                  style={{ width: '100%' }}
-                />
-                <div className="mt-2 flex items-center gap-2">
-                  <Input
-                    value={themeColor}
-                    onChange={(e) => {
-                      const val = e.target.value
-                      if (/^#[0-9a-fA-F]{0,6}$/.test(val)) {
-                        setThemeColor(val)
-                      }
-                    }}
-                    className="h-7 font-mono text-xs"
-                    maxLength={7}
-                  />
-                </div>
-              </div>
-            </>
-          )}
+        {/* Inline Color Swatches */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {COLOR_PRESETS.map((color) => (
+            <button
+              key={color}
+              type="button"
+              onClick={() => setThemeColor(color)}
+              className={cn(
+                'relative h-6 w-6 rounded-full border transition-transform hover:scale-110',
+                themeColor === color && 'ring-2 ring-ring ring-offset-1'
+              )}
+              style={{ backgroundColor: color }}
+              aria-label={`Set theme color to ${color}`}
+            >
+              {themeColor === color && (
+                <Check className="absolute inset-0 m-auto h-3 w-3 text-white drop-shadow" />
+              )}
+            </button>
+          ))}
         </div>
       </div>
     </div>

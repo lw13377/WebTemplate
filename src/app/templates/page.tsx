@@ -8,20 +8,29 @@ export const metadata: Metadata = {
   description: 'Browse 20 professionally designed resume templates across 4 categories',
 }
 
-export default function TemplatesPage() {
+export default async function TemplatesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ select?: string }>
+}) {
+  const { select } = await searchParams
+  const selectMode = select === 'true'
+
   return (
     <div className="relative min-h-screen">
       <Navbar />
       <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Resume Templates
+            {selectMode ? 'Choose a Template' : 'Resume Templates'}
           </h1>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            Choose from 20 professionally designed templates. Customize colors, fonts, and content to make it yours.
+            {selectMode
+              ? 'Pick a template to start your resume. You can always change it later.'
+              : 'Choose from 20 professionally designed templates. Customize colors, fonts, and content to make it yours.'}
           </p>
         </div>
-        <TemplateGallery />
+        <TemplateGallery selectMode={selectMode} />
       </main>
       <Footer />
     </div>

@@ -3,8 +3,10 @@
 import { useCallback } from 'react'
 import { User } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { AutocompleteInput } from '@/components/ui/autocomplete-input'
 import { Label } from '@/components/ui/label'
 import { useResume } from '@/hooks/use-resume'
+import { US_CITIES } from '@/lib/suggestion-data'
 import type { PersonalInfo } from '@/types/resume'
 import { CollapsibleSection } from './collapsible-section'
 
@@ -57,10 +59,11 @@ export function PersonalInfoForm() {
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="location">Location</Label>
-          <Input
+          <AutocompleteInput
             id="location"
             value={personal.location}
-            onChange={(e) => update('location', e.target.value)}
+            onChange={(val) => update('location', val)}
+            suggestions={US_CITIES}
             placeholder="New York, NY"
           />
         </div>

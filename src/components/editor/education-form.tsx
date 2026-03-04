@@ -4,8 +4,10 @@ import { useCallback } from 'react'
 import { GraduationCap, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { AutocompleteInput } from '@/components/ui/autocomplete-input'
 import { Label } from '@/components/ui/label'
 import { useResume } from '@/hooks/use-resume'
+import { US_CITIES } from '@/lib/suggestion-data'
 import type { Education } from '@/types/resume'
 import { CollapsibleSection } from './collapsible-section'
 
@@ -108,11 +110,12 @@ export function EducationForm() {
                 </div>
                 <div className="space-y-1.5">
                   <Label>Location</Label>
-                  <Input
+                  <AutocompleteInput
                     value={edu.location}
-                    onChange={(e) =>
-                      updateEducation(edu.id, 'location', e.target.value)
+                    onChange={(val) =>
+                      updateEducation(edu.id, 'location', val)
                     }
+                    suggestions={US_CITIES}
                     placeholder="Cambridge, MA"
                   />
                 </div>

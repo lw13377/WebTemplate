@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -8,6 +8,7 @@ import { TEMPLATES, TEMPLATE_CATEGORIES, type TemplateInfo } from './template-re
 import { TemplateRenderer } from './template-renderer'
 import { SAMPLE_RESUME } from '@/lib/sample-data'
 import { PAGE_WIDTH, PAGE_HEIGHT } from './base-styles'
+import { createResume } from '@/lib/actions/resume'
 
 const CATEGORY_LABELS: Record<string, string> = {
   professional: 'Professional',
@@ -16,9 +17,8 @@ const CATEGORY_LABELS: Record<string, string> = {
   minimal: 'Minimal',
 }
 
-export function TemplateGallery() {
+export function TemplateGallery({ selectMode = false }: { selectMode?: boolean }) {
   const [activeCategory, setActiveCategory] = useState<string>('all')
-  const router = useRouter()
 
   const filtered =
     activeCategory === 'all'
@@ -62,16 +62,27 @@ export function TemplateGallery() {
       {/* Template Grid */}
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filtered.map((template) => (
-          <TemplateCard key={template.id} template={template} />
+          <TemplateCard key={template.id} template={template} selectMode={selectMode} />
         ))}
       </div>
     </div>
   )
 }
 
-function TemplateCard({ template }: { template: TemplateInfo }) {
+function TemplateCard({ template, selectMode }: { template: TemplateInfo; selectMode: boolean }) {
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const scale = 220 / PAGE_WIDTH
+
+  function handleSelect() {
+    if (selectMode) {
+      startTransition(async () => {
+        await createResume(template.id)
+      })
+    } else {
+      router.push('/login')
+    }
+  }
 
   return (
     <div className="group flex flex-col">
@@ -101,9 +112,10 @@ function TemplateCard({ template }: { template: TemplateInfo }) {
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
           <Button
             size="sm"
-            onClick={() => router.push('/login')}
+            onClick={handleSelect}
+            disabled={isPending}
           >
-            Use Template
+            {isPending ? 'Creating...' : selectMode ? 'Start with This' : 'Use Template'}
           </Button>
         </div>
       </div>

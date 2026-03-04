@@ -1,8 +1,9 @@
+import Link from 'next/link'
 import { Plus, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { ResumeCard } from '@/components/dashboard/resume-card'
-import { getResumes, createResume } from '@/lib/actions/resume'
+import { getResumes } from '@/lib/actions/resume'
 import { createClient } from '@/lib/supabase/server'
 import type { ResumeRow } from '@/types/database'
 
@@ -31,12 +32,12 @@ export default async function DashboardPage() {
             </p>
           )}
         </div>
-        <form action={createResume}>
-          <Button type="submit" size="default">
+        <Button asChild size="default">
+          <Link href="/templates?select=true">
             <Plus className="h-4 w-4" />
             Create New Resume
-          </Button>
-        </form>
+          </Link>
+        </Button>
       </div>
 
       <Separator />
@@ -58,12 +59,12 @@ export default async function DashboardPage() {
             Create your first resume to get started. Choose from professional
             templates and customize it to stand out.
           </p>
-          <form action={createResume} className="mt-6">
-            <Button type="submit">
+          <Button asChild className="mt-6">
+            <Link href="/templates?select=true">
               <Plus className="h-4 w-4" />
               Create Your First Resume
-            </Button>
-          </form>
+            </Link>
+          </Button>
         </div>
       )}
     </div>

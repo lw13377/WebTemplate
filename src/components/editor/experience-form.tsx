@@ -4,9 +4,11 @@ import { useCallback } from 'react'
 import { Briefcase, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { AutocompleteInput } from '@/components/ui/autocomplete-input'
+import { SuggestionTextarea } from '@/components/ui/suggestion-textarea'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { useResume } from '@/hooks/use-resume'
+import { US_CITIES, JOB_TITLES, getDescriptionBullets } from '@/lib/suggestion-data'
 import type { Experience } from '@/types/resume'
 import { CollapsibleSection } from './collapsible-section'
 
@@ -89,11 +91,12 @@ export function ExperienceForm() {
               <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="space-y-1.5">
                   <Label>Job Title</Label>
-                  <Input
+                  <AutocompleteInput
                     value={exp.title}
-                    onChange={(e) =>
-                      updateExperience(exp.id, 'title', e.target.value)
+                    onChange={(val) =>
+                      updateExperience(exp.id, 'title', val)
                     }
+                    suggestions={JOB_TITLES}
                     placeholder="Software Engineer"
                   />
                 </div>
@@ -109,11 +112,12 @@ export function ExperienceForm() {
                 </div>
                 <div className="space-y-1.5">
                   <Label>Location</Label>
-                  <Input
+                  <AutocompleteInput
                     value={exp.location}
-                    onChange={(e) =>
-                      updateExperience(exp.id, 'location', e.target.value)
+                    onChange={(val) =>
+                      updateExperience(exp.id, 'location', val)
                     }
+                    suggestions={US_CITIES}
                     placeholder="San Francisco, CA"
                   />
                 </div>
@@ -146,13 +150,16 @@ export function ExperienceForm() {
               {/* Row 3: Description */}
               <div className="space-y-1.5">
                 <Label>Description</Label>
-                <Textarea
+                <SuggestionTextarea
                   value={exp.description}
-                  onChange={(e) =>
-                    updateExperience(exp.id, 'description', e.target.value)
+                  onChange={(val) =>
+                    updateExperience(exp.id, 'description', val)
                   }
+                  suggestions={getDescriptionBullets(exp.title)}
                   placeholder="Describe your responsibilities, achievements, and impact..."
-                  className="min-h-[80px] resize-y"
+                  className="min-h-[80px]"
+                  mode="append"
+                  label="Suggested bullet points"
                 />
               </div>
             </div>

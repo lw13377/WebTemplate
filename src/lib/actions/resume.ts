@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { DEFAULT_RESUME_CONTENT } from '@/types/resume'
+import { SAMPLE_RESUME } from '@/lib/sample-data'
 
 export async function getResumes() {
   const supabase = await createClient()
@@ -18,14 +18,16 @@ export async function getResumes() {
   return data
 }
 
-export async function createResume() {
+export async function createResume(templateId: string = 'professional-classic') {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const content = { ...SAMPLE_RESUME, templateId }
+
   const { data, error } = await supabase
     .from('resumes')
-    .insert({ user_id: user.id, content: DEFAULT_RESUME_CONTENT })
+    .insert({ user_id: user.id, content })
     .select()
     .single()
 
