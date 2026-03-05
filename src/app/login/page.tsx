@@ -440,7 +440,7 @@ function LoginForm() {
         {/* Continue as Guest */}
         <div className="mt-4 text-center">
           <Link
-            href="/editor/new"
+            href="/templates"
             className="inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary/80"
           >
             Continue as Guest &rarr;

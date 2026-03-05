@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import {
   Check,
   FileDown,
   Loader2,
+  LogIn,
   PenLine,
   RotateCcw,
   Save,
@@ -14,6 +16,15 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { toast } from 'sonner'
 import { DownloadModal } from './download-modal'
 import { useResume } from '@/hooks/use-resume'
 import { TemplateRenderer } from '@/components/templates/template-renderer'
@@ -36,6 +47,7 @@ export function PreviewPanel({ onEditResume }: { onEditResume?: () => void }) {
   const [zoom, setZoom] = useState(1)
   const [autoScale, setAutoScale] = useState(1)
   const [showDownload, setShowDownload] = useState(false)
+  const [showGuestSave, setShowGuestSave] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
   const [isSubscribed, setIsSubscribed] = useState(true)
 
@@ -146,7 +158,13 @@ export function PreviewPanel({ onEditResume }: { onEditResume?: () => void }) {
           <Button
             variant="outline"
             size="sm"
-            onClick={saveResume}
+            onClick={() => {
+              if (mode === 'guest') {
+                setShowGuestSave(true)
+                return
+              }
+              saveResume()
+            }}
             disabled={!hasUnsavedChanges || isSaving}
           >
             {isSaving ? (
@@ -298,6 +316,35 @@ export function PreviewPanel({ onEditResume }: { onEditResume?: () => void }) {
           </Button>
         </div>
       )}
+
+      {/* Guest save prompt */}
+      <Dialog open={showGuestSave} onOpenChange={setShowGuestSave}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create an account to save</DialogTitle>
+            <DialogDescription>
+              Sign up for a free account to save your progress and access your resumes from any device.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col gap-2 sm:flex-row">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowGuestSave(false)
+                toast.info('Your progress will be lost when you leave this page. Create a free account to save your work.')
+              }}
+            >
+              Continue Editing
+            </Button>
+            <Button asChild>
+              <Link href="/login">
+                <LogIn className="h-4 w-4" />
+                Create Free Account
+              </Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <DownloadModal open={showDownload} onOpenChange={setShowDownload} />
     </div>
