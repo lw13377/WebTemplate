@@ -26,7 +26,7 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   const isGuestEditor = request.nextUrl.pathname === '/editor/new'
-  if (!user && !isGuestEditor && (request.nextUrl.pathname.startsWith('/dashboard') || request.nextUrl.pathname.startsWith('/editor'))) {
+  if (!user && !isGuestEditor && (request.nextUrl.pathname.startsWith('/dashboard') || request.nextUrl.pathname.startsWith('/editor') || request.nextUrl.pathname.startsWith('/saved'))) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)

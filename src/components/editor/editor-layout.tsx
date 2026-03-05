@@ -90,7 +90,7 @@ export function EditorLayout() {
             mobileView !== 'preview' && 'hidden md:block'
           )}
         >
-          <PreviewPanel />
+          <PreviewPanel onEditResume={() => setMobileView('form')} />
         </div>
 
         {/* Right Sidebar — Templates + Saved (desktop: tabbed, mobile: separate views) */}
@@ -158,11 +158,11 @@ export function EditorLayout() {
       {/* Floating Preview FAB on mobile (form mode only) */}
       {mobileView === 'form' && (
         <Button
-          className="fixed bottom-5 right-5 z-50 h-14 w-14 rounded-full shadow-xl md:hidden"
+          className="fixed bottom-5 right-5 z-50 gap-2 rounded-full px-5 py-3 shadow-xl md:hidden"
           onClick={() => setMobileView('preview')}
-          aria-label="Preview resume"
         >
-          <Eye className="h-6 w-6" />
+          <Eye className="h-5 w-5" />
+          Preview
         </Button>
       )}
 
@@ -170,11 +170,11 @@ export function EditorLayout() {
       {mobileView === 'preview' && (
         <Button
           variant="outline"
-          className="fixed bottom-5 right-5 z-50 h-14 w-14 rounded-full bg-background shadow-xl md:hidden"
+          className="fixed bottom-5 right-5 z-50 gap-2 rounded-full bg-background px-5 py-3 shadow-xl md:hidden"
           onClick={() => setMobileView('form')}
-          aria-label="Back to editing"
         >
-          <PenLine className="h-6 w-6" />
+          <PenLine className="h-5 w-5" />
+          Edit Resume
         </Button>
       )}
     </div>

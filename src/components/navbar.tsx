@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FileText, Menu, LogOut, LayoutDashboard } from "lucide-react";
+import { FileText, Menu, LogOut, LayoutDashboard, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -48,6 +48,14 @@ export function Navbar() {
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-1 md:flex">
+          {user && (
+            <Link
+              href="/saved"
+              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Saved Resumes
+            </Link>
+          )}
           <Link
             href="/templates"
             className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -108,6 +116,15 @@ export function Navbar() {
               </SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-1 px-4">
+              {user && (
+                <Link
+                  href="/saved"
+                  onClick={() => setOpen(false)}
+                  className="rounded-md px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                >
+                  Saved Resumes
+                </Link>
+              )}
               <Link
                 href="/templates"
                 onClick={() => setOpen(false)}

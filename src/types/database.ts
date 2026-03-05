@@ -24,3 +24,10 @@ export interface ResumeRow {
   created_at: string
   updated_at: string
 }
+
+export interface FavoriteTemplate {
+  id: string
+  user_id: string
+  template_id: string
+  created_at: string
+}

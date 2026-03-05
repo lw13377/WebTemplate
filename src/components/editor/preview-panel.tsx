@@ -5,6 +5,7 @@ import {
   Check,
   FileDown,
   Loader2,
+  PenLine,
   RotateCcw,
   Save,
   Undo2,
@@ -19,7 +20,7 @@ import { TemplateRenderer } from '@/components/templates/template-renderer'
 import { PAGE_WIDTH, PAGE_HEIGHT } from '@/components/templates/base-styles'
 import { checkSubscription } from '@/lib/actions/subscription'
 
-export function PreviewPanel() {
+export function PreviewPanel({ onEditResume }: { onEditResume?: () => void }) {
   const {
     templateId,
     content,
@@ -155,13 +156,11 @@ export function PreviewPanel() {
             ) : (
               <Save className="h-4 w-4" />
             )}
-            <span className="hidden sm:inline">
-              {isSaving
-                ? 'Saving...'
-                : saveStatus === 'saved' && !hasUnsavedChanges
-                  ? 'Saved'
-                  : 'Save Progress'}
-            </span>
+            {isSaving
+              ? 'Saving...'
+              : saveStatus === 'saved' && !hasUnsavedChanges
+                ? 'Saved'
+                : 'Save Progress'}
           </Button>
 
           <Button
@@ -173,7 +172,7 @@ export function PreviewPanel() {
             }}
           >
             <FileDown className="h-4 w-4" />
-            <span className="hidden sm:inline">Download</span>
+            Download as PDF
           </Button>
         </div>
 
@@ -231,7 +230,7 @@ export function PreviewPanel() {
       <div
         ref={containerRef}
         className="relative flex flex-1 items-start justify-center overflow-auto bg-muted/30 p-3"
-        style={{ userSelect: 'none' }}
+        style={{ userSelect: 'none', touchAction: 'pan-x pan-y', WebkitOverflowScrolling: 'touch' }}
         onContextMenu={(e) => e.preventDefault()}
       >
         <div
@@ -284,6 +283,21 @@ export function PreviewPanel() {
           </div>
         )}
       </div>
+
+      {/* Mobile: edit resume button */}
+      {onEditResume && (
+        <div className="flex-shrink-0 border-t p-3 md:hidden">
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full gap-2"
+            onClick={onEditResume}
+          >
+            <PenLine className="h-4 w-4" />
+            Edit Resume
+          </Button>
+        </div>
+      )}
 
       <DownloadModal open={showDownload} onOpenChange={setShowDownload} />
     </div>

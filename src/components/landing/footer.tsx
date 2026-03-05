@@ -7,6 +7,7 @@ const footerLinks = {
     title: "Product",
     links: [
       { label: "Templates", href: "/templates" },
+      { label: "Saved Resumes", href: "/saved" },
       { label: "Pricing", href: "/#pricing" },
     ],
   },

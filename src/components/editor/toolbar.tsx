@@ -42,7 +42,7 @@ export function Toolbar() {
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
             <FileText className="h-3.5 w-3.5 text-primary-foreground" />
           </div>
-          <span className="hidden text-sm font-bold tracking-tight sm:inline">Resumes in Seconds</span>
+          <span className="text-sm font-bold tracking-tight">Resumes in Seconds</span>
         </Link>
 
         <div className="mx-1 h-5 w-px bg-border" />
