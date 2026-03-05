@@ -5,23 +5,12 @@ import {
   Text,
   View,
   StyleSheet,
-  Font,
 } from '@react-pdf/renderer'
 import type { ResumeContent } from '@/types/resume'
 
 function isHidden(content: ResumeContent, section: string): boolean {
   return content.hiddenSections?.includes(section) ?? false
 }
-
-// Register a web-safe font
-Font.register({
-  family: 'Helvetica',
-  fonts: [
-    { src: 'Helvetica' },
-    { src: 'Helvetica-Bold', fontWeight: 'bold' },
-    { src: 'Helvetica-Oblique', fontStyle: 'italic' },
-  ],
-})
 
 interface PdfTemplateProps {
   content: ResumeContent
@@ -39,130 +28,146 @@ export function PdfResumeDocument({ content, themeColor }: PdfTemplateProps) {
   if (personal.website) contactParts.push(personal.website)
   if (personal.linkedin) contactParts.push(personal.linkedin)
 
-  const styles = StyleSheet.create({
+  const s = StyleSheet.create({
     page: {
-      padding: 40,
-      fontSize: 10,
+      paddingTop: 28,
+      paddingBottom: 28,
+      paddingHorizontal: 32,
+      fontSize: 9,
       fontFamily: 'Helvetica',
-      lineHeight: 1.5,
-      color: '#1a1a1a',
+      lineHeight: 1.35,
+      color: '#222',
     },
+    // Header
     name: {
-      fontSize: 24,
+      fontSize: 18,
       fontWeight: 'bold',
       textAlign: 'center',
-      marginBottom: 4,
+      color: '#111',
+      marginBottom: 2,
+    },
+    title: {
+      fontSize: 9.5,
+      textAlign: 'center',
+      color: themeColor,
+      marginBottom: 3,
     },
     contact: {
-      fontSize: 9,
+      fontSize: 8,
       textAlign: 'center',
-      color: '#555555',
-      marginBottom: 8,
+      color: '#555',
+      marginBottom: 6,
     },
-    hr: {
-      borderBottomWidth: 2,
-      borderBottomColor: themeColor,
-      borderBottomStyle: 'solid',
-      marginVertical: 8,
-    },
-    sectionHeading: {
-      fontSize: 12,
-      fontWeight: 'bold',
-      textTransform: 'uppercase',
-      letterSpacing: 1.5,
-      color: themeColor,
-      marginBottom: 4,
-      paddingBottom: 3,
+    headerLine: {
       borderBottomWidth: 1.5,
       borderBottomColor: themeColor,
       borderBottomStyle: 'solid',
-      marginTop: 14,
+      marginBottom: 6,
     },
+    // Sections
+    sectionHeading: {
+      fontSize: 10,
+      fontWeight: 'bold',
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      color: themeColor,
+      marginTop: 7,
+      marginBottom: 3,
+      paddingBottom: 2,
+      borderBottomWidth: 0.75,
+      borderBottomColor: '#ddd',
+      borderBottomStyle: 'solid',
+    },
+    // Entries
     entryRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginTop: 8,
+      alignItems: 'flex-start',
+      marginTop: 4,
     },
     entryTitle: {
-      fontSize: 11,
+      fontSize: 9.5,
       fontWeight: 'bold',
+      color: '#111',
     },
-    entrySubtitle: {
-      fontSize: 10,
-      fontStyle: 'italic',
-      color: '#555555',
+    entryCompany: {
+      fontSize: 9,
+      color: '#444',
     },
     entryDate: {
+      fontSize: 8,
+      color: '#666',
+      textAlign: 'right',
+      minWidth: 80,
+    },
+    entryDesc: {
+      fontSize: 8.5,
+      marginTop: 2,
+      color: '#333',
+      lineHeight: 1.4,
+    },
+    // Skills
+    skillText: {
       fontSize: 9,
-      color: '#777777',
+      color: '#333',
+      marginTop: 2,
+      lineHeight: 1.4,
     },
-    entryDescription: {
-      marginTop: 3,
-      color: '#333333',
-      lineHeight: 1.6,
+    // Inline items
+    inlineText: {
+      fontSize: 8.5,
+      color: '#333',
+      marginTop: 2,
     },
-    text: {
-      color: '#333333',
-      lineHeight: 1.6,
-    },
-    skillRow: {
-      marginTop: 4,
-      flexDirection: 'row',
-    },
-    skillCategory: {
-      fontWeight: 'bold',
-    },
-    inline: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      marginTop: 4,
+    // Summary
+    summaryText: {
+      fontSize: 9,
+      color: '#333',
+      lineHeight: 1.45,
+      marginTop: 1,
     },
   })
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={s.page}>
         {/* Header */}
-        {personal.name ? <Text style={styles.name}>{personal.name}</Text> : null}
+        {personal.name && <Text style={s.name}>{personal.name}</Text>}
         {contactParts.length > 0 && (
-          <Text style={styles.contact}>{contactParts.join('  |  ')}</Text>
+          <Text style={s.contact}>{contactParts.join('  •  ')}</Text>
         )}
-        <View style={styles.hr} />
+        <View style={s.headerLine} />
 
         {/* Summary */}
-        {summary && !isHidden(content, 'summary') ? (
+        {summary && !isHidden(content, 'summary') && (
           <View>
-            <Text style={styles.sectionHeading}>Professional Summary</Text>
-            <Text style={styles.text}>{summary}</Text>
+            <Text style={s.sectionHeading}>Summary</Text>
+            <Text style={s.summaryText}>{summary}</Text>
           </View>
-        ) : null}
+        )}
 
         {/* Experience */}
         {experience.length > 0 && !isHidden(content, 'experience') && (
           <View>
-            <Text style={styles.sectionHeading}>Experience</Text>
+            <Text style={s.sectionHeading}>Experience</Text>
             {experience.map((exp) => (
-              <View key={exp.id}>
-                <View style={styles.entryRow}>
-                  <View>
-                    <Text style={styles.entryTitle}>{exp.title}</Text>
+              <View key={exp.id} wrap={false}>
+                <View style={s.entryRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.entryTitle}>{exp.title}</Text>
                     {exp.company && (
-                      <Text style={styles.entrySubtitle}>
-                        {exp.location ? `${exp.company}, ${exp.location}` : exp.company}
+                      <Text style={s.entryCompany}>
+                        {exp.company}{exp.location ? `, ${exp.location}` : ''}
                       </Text>
                     )}
                   </View>
                   {(exp.startDate || exp.endDate) && (
-                    <Text style={styles.entryDate}>
-                      {exp.startDate}
-                      {exp.startDate && exp.endDate ? ' - ' : ''}
-                      {exp.endDate}
+                    <Text style={s.entryDate}>
+                      {exp.startDate}{exp.startDate && exp.endDate ? ' – ' : ''}{exp.endDate}
                     </Text>
                   )}
                 </View>
-                {exp.description ? (
-                  <Text style={styles.entryDescription}>{exp.description}</Text>
-                ) : null}
+                {exp.description && <Text style={s.entryDesc}>{exp.description}</Text>}
               </View>
             ))}
           </View>
@@ -171,60 +176,55 @@ export function PdfResumeDocument({ content, themeColor }: PdfTemplateProps) {
         {/* Education */}
         {education.length > 0 && !isHidden(content, 'education') && (
           <View>
-            <Text style={styles.sectionHeading}>Education</Text>
+            <Text style={s.sectionHeading}>Education</Text>
             {education.map((edu) => (
-              <View key={edu.id}>
-                <View style={styles.entryRow}>
-                  <View>
-                    <Text style={styles.entryTitle}>{edu.degree}</Text>
+              <View key={edu.id} wrap={false}>
+                <View style={s.entryRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.entryTitle}>{edu.degree}</Text>
                     {edu.school && (
-                      <Text style={styles.entrySubtitle}>
-                        {edu.location ? `${edu.school}, ${edu.location}` : edu.school}
+                      <Text style={s.entryCompany}>
+                        {edu.school}{edu.location ? `, ${edu.location}` : ''}
                       </Text>
                     )}
                   </View>
                   {(edu.startDate || edu.endDate) && (
-                    <Text style={styles.entryDate}>
-                      {edu.startDate}
-                      {edu.startDate && edu.endDate ? ' - ' : ''}
-                      {edu.endDate}
+                    <Text style={s.entryDate}>
+                      {edu.startDate}{edu.startDate && edu.endDate ? ' – ' : ''}{edu.endDate}
                     </Text>
                   )}
                 </View>
-                {edu.gpa ? (
-                  <Text style={{ marginTop: 2, color: '#555', fontSize: 9 }}>GPA: {edu.gpa}</Text>
-                ) : null}
+                {edu.gpa && (
+                  <Text style={{ fontSize: 8, color: '#555', marginTop: 1 }}>GPA: {edu.gpa}</Text>
+                )}
               </View>
             ))}
           </View>
         )}
 
         {/* Skills */}
-        {skills.flatMap(s => s.items).length > 0 && !isHidden(content, 'skills') && (
+        {skills.flatMap(g => g.items).length > 0 && !isHidden(content, 'skills') && (
           <View>
-            <Text style={styles.sectionHeading}>Skills</Text>
-            <View style={styles.skillRow}>
-              <Text style={styles.text}>{skills.flatMap(s => s.items).join(', ')}</Text>
-            </View>
+            <Text style={s.sectionHeading}>Skills</Text>
+            <Text style={s.skillText}>
+              {skills.flatMap(g => g.items).join('  •  ')}
+            </Text>
           </View>
         )}
 
         {/* Projects */}
         {projects.length > 0 && !isHidden(content, 'projects') && (
           <View>
-            <Text style={styles.sectionHeading}>Projects</Text>
+            <Text style={s.sectionHeading}>Projects</Text>
             {projects.map((proj) => (
-              <View key={proj.id} style={{ marginTop: 8 }}>
-                <Text style={styles.entryTitle}>
-                  {proj.name}
-                  {proj.url ? ` — ${proj.url}` : ''}
+              <View key={proj.id} wrap={false} style={{ marginTop: 3 }}>
+                <Text style={s.entryTitle}>
+                  {proj.name}{proj.url ? `  —  ${proj.url}` : ''}
                 </Text>
-                {proj.description ? (
-                  <Text style={styles.entryDescription}>{proj.description}</Text>
-                ) : null}
+                {proj.description && <Text style={s.entryDesc}>{proj.description}</Text>}
                 {proj.technologies.length > 0 && (
-                  <Text style={{ marginTop: 2, fontSize: 9, color: '#555' }}>
-                    Technologies: {proj.technologies.join(', ')}
+                  <Text style={{ fontSize: 8, color: '#555', marginTop: 1 }}>
+                    {proj.technologies.join(', ')}
                   </Text>
                 )}
               </View>
@@ -235,13 +235,13 @@ export function PdfResumeDocument({ content, themeColor }: PdfTemplateProps) {
         {/* Certifications */}
         {certifications.length > 0 && !isHidden(content, 'certifications') && (
           <View>
-            <Text style={styles.sectionHeading}>Certifications</Text>
+            <Text style={s.sectionHeading}>Certifications</Text>
             {certifications.map((cert) => (
-              <View key={cert.id} style={{ marginTop: 4 }}>
-                <Text>
+              <View key={cert.id} wrap={false} style={{ marginTop: 2 }}>
+                <Text style={{ fontSize: 9 }}>
                   <Text style={{ fontWeight: 'bold' }}>{cert.name}</Text>
-                  {cert.issuer ? <Text style={{ color: '#555' }}> - {cert.issuer}</Text> : null}
-                  {cert.date ? <Text style={{ color: '#777', fontSize: 9 }}> ({cert.date})</Text> : null}
+                  {cert.issuer ? <Text style={{ color: '#444' }}> — {cert.issuer}</Text> : null}
+                  {cert.date ? <Text style={{ color: '#666', fontSize: 8 }}>  ({cert.date})</Text> : null}
                 </Text>
               </View>
             ))}
@@ -251,14 +251,12 @@ export function PdfResumeDocument({ content, themeColor }: PdfTemplateProps) {
         {/* Languages */}
         {languages.length > 0 && !isHidden(content, 'languages') && (
           <View>
-            <Text style={styles.sectionHeading}>Languages</Text>
-            <View style={styles.inline}>
-              <Text style={styles.text}>
-                {languages
-                  .map((l) => `${l.language}${l.proficiency ? ` (${l.proficiency})` : ''}`)
-                  .join('  |  ')}
-              </Text>
-            </View>
+            <Text style={s.sectionHeading}>Languages</Text>
+            <Text style={s.inlineText}>
+              {languages
+                .map((l) => `${l.language}${l.proficiency ? ` (${l.proficiency})` : ''}`)
+                .join('  •  ')}
+            </Text>
           </View>
         )}
       </Page>
