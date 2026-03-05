@@ -14,12 +14,24 @@ export async function POST() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get profile to check for existing Stripe customer
+    // Get profile to check for existing Stripe customer and subscription
     const { data: profile } = await getSupabaseAdmin()
       .from('profiles')
-      .select('stripe_customer_id')
+      .select('stripe_customer_id, is_subscribed, subscription_expires_at')
       .eq('id', user.id)
       .single()
+
+    // Already subscribed — don't create a new checkout
+    if (
+      profile?.is_subscribed &&
+      (!profile.subscription_expires_at ||
+        new Date(profile.subscription_expires_at) > new Date())
+    ) {
+      return NextResponse.json(
+        { error: 'You already have an active subscription' },
+        { status: 400 },
+      )
+    }
 
     let customerId = profile?.stripe_customer_id
 

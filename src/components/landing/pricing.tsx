@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { checkSubscription } from "@/lib/actions/subscription";
 
 interface PricingFeature {
   text: string;
@@ -64,16 +65,26 @@ const plans: PricingPlan[] = [
 export function Pricing() {
   const router = useRouter()
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isSubscribed, setIsSubscribed] = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => setIsLoggedIn(!!data.user))
+    supabase.auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user)
+      if (data.user) {
+        checkSubscription().then(setIsSubscribed)
+      }
+    })
   }, [])
 
   async function handleGetPro() {
     if (!isLoggedIn) {
       router.push('/login?redirect=/dashboard')
+      return
+    }
+    if (isSubscribed) {
+      router.push('/dashboard')
       return
     }
     setCheckoutLoading(true)
@@ -179,6 +190,8 @@ export function Pricing() {
                       <Loader2 className="h-4 w-4 animate-spin" />
                       Redirecting…
                     </>
+                  ) : isSubscribed ? (
+                    "Go to Dashboard"
                   ) : (
                     plan.cta
                   )}
