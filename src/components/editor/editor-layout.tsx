@@ -66,7 +66,7 @@ export function EditorLayout() {
             mobileView !== 'form' && 'hidden md:block'
           )}
         >
-          <FormPanel />
+          <FormPanel onViewPreview={() => setMobileView('preview')} />
         </div>
 
         {/* Preview Panel (center) */}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Sparkles } from 'lucide-react'
+import { Eye, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { useResume } from '@/hooks/use-resume'
@@ -15,7 +15,7 @@ import { ProjectsForm } from './projects-form'
 import { CertificationsForm } from './certifications-form'
 import { LanguagesForm } from './languages-form'
 
-export function FormPanel() {
+export function FormPanel({ onViewPreview }: { onViewPreview?: () => void }) {
   const { mode } = useResume()
   const [isSubscribed, setIsSubscribed] = useState(true)
 
@@ -68,6 +68,19 @@ export function FormPanel() {
         <ProjectsForm />
         <CertificationsForm />
         <LanguagesForm />
+
+        {/* Mobile: view preview button */}
+        {onViewPreview && (
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full gap-2 md:hidden"
+            onClick={onViewPreview}
+          >
+            <Eye className="h-4 w-4" />
+            View Edited Resume
+          </Button>
+        )}
       </div>
     </div>
   )

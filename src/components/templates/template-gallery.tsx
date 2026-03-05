@@ -70,7 +70,7 @@ export function TemplateGallery() {
       </div>
 
       {/* Template Grid */}
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-3 xl:grid-cols-4">
         {filtered.map((template) => (
           <TemplateCard key={template.id} template={template} locked={!!template.premium && isSubscribed === false} />
         ))}
@@ -82,7 +82,7 @@ export function TemplateGallery() {
 function TemplateCard({ template, locked }: { template: TemplateInfo; locked: boolean }) {
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
-  const scale = 220 / PAGE_WIDTH
+  const scale = 220 / PAGE_WIDTH // ~0.37
 
   function handleSelect() {
     if (locked) {
@@ -104,19 +104,19 @@ function TemplateCard({ template, locked }: { template: TemplateInfo; locked: bo
   }
 
   return (
-    <div className="group relative flex flex-col">
+    <div className="group relative flex flex-col items-center">
       {/* Mini Preview */}
       <div
         className={cn(
-          'relative overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow group-hover:shadow-lg',
+          'relative w-full overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow group-hover:shadow-lg',
           locked && 'opacity-75'
         )}
-        style={{ height: `${PAGE_HEIGHT * scale + 8}px` }}
+        style={{ aspectRatio: `${PAGE_WIDTH} / ${PAGE_HEIGHT}` }}
       >
         <div
+          className="absolute inset-0 origin-top-left"
           style={{
             transform: `scale(${scale})`,
-            transformOrigin: 'top left',
             width: `${PAGE_WIDTH}px`,
             height: `${PAGE_HEIGHT}px`,
             pointerEvents: 'none',
@@ -179,7 +179,7 @@ function TemplateCard({ template, locked }: { template: TemplateInfo; locked: bo
       )}
 
       {/* Info */}
-      <div className="mt-3">
+      <div className="mt-3 w-full text-center sm:text-left">
         <h3 className="text-sm font-semibold">{template.name}</h3>
         <p className="text-xs text-muted-foreground">{template.description}</p>
       </div>
