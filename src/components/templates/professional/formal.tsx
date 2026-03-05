@@ -4,6 +4,7 @@ import { pageContainerStyle } from '../base-styles'
 
 export default function FormalTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const contactParts: string[] = []
   if (personal.email) contactParts.push(personal.email)
@@ -220,23 +221,16 @@ export default function FormalTemplate({ content, themeColor, fontFamily }: Temp
       )}
 
       {/* Skills */}
-      {skills.length > 0 && (
+      {allSkills.length > 0 && (
         <div>
           <div style={sectionHeadingStyle}>
             <div style={ornamentalLineStyle} />
             <span>Skills</span>
             <div style={ornamentalLineStyle} />
           </div>
-          {skills.map((cat) => (
-            <div key={cat.id} style={{ marginBottom: '5px', textAlign: 'center' as const }}>
-              {cat.category && (
-                <span style={{ fontWeight: 700, color: '#1a1a1a', fontSize: '10.5px' }}>
-                  {cat.category}:{' '}
-                </span>
-              )}
-              <span style={{ color: '#333' }}>{cat.items.join(', ')}</span>
-            </div>
-          ))}
+          <div style={{ textAlign: 'center' as const, color: '#333' }}>
+            {allSkills.join(', ')}
+          </div>
         </div>
       )}
 

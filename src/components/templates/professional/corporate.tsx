@@ -4,6 +4,7 @@ import { lightenColor, pageContainerStyle } from '../base-styles'
 
 export default function CorporateTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const sectionHeadingStyle: React.CSSProperties = {
     fontSize: '13px',
@@ -155,7 +156,7 @@ export default function CorporateTemplate({ content, themeColor, fontFamily }: T
         )}
 
         {/* Skills & Languages - Two column layout */}
-        {(skills.length > 0 || languages.length > 0) && (
+        {(allSkills.length > 0 || languages.length > 0) && (
           <div
             style={{
               display: 'flex',
@@ -164,25 +165,18 @@ export default function CorporateTemplate({ content, themeColor, fontFamily }: T
             }}
           >
             {/* Skills column */}
-            {skills.length > 0 && (
+            {allSkills.length > 0 && (
               <div style={{ flex: languages.length > 0 ? '1 1 60%' : '1 1 100%' }}>
                 <h2 style={sectionHeadingStyle}>Skills</h2>
-                {skills.map((cat) => (
-                  <div key={cat.id} style={{ marginBottom: '6px' }}>
-                    {cat.category && (
-                      <span style={{ fontWeight: 700, color: '#1a1a1a', fontSize: '10.5px' }}>
-                        {cat.category}:{' '}
-                      </span>
-                    )}
-                    <span style={{ color: '#333' }}>{cat.items.join(', ')}</span>
-                  </div>
-                ))}
+                <div style={{ color: '#333' }}>
+                  {allSkills.join(', ')}
+                </div>
               </div>
             )}
 
             {/* Languages column */}
             {languages.length > 0 && (
-              <div style={{ flex: skills.length > 0 ? '1 1 40%' : '1 1 100%' }}>
+              <div style={{ flex: allSkills.length > 0 ? '1 1 40%' : '1 1 100%' }}>
                 <h2 style={sectionHeadingStyle}>Languages</h2>
                 {languages.map((lang) => (
                   <div key={lang.id} style={{ marginBottom: '4px' }}>

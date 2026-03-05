@@ -4,6 +4,7 @@ import { hexToRgb, lightenColor, darkenColor, pageContainerStyle } from '@/compo
 
 export default function ArtisticTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const { r, g, b } = hexToRgb(themeColor)
   const lightTint = lightenColor(themeColor, 0.9)
@@ -305,57 +306,39 @@ export default function ArtisticTemplate({ content, themeColor, fontFamily }: Te
         )}
 
         {/* Skills — creative scattered layout */}
-        {skills.length > 0 && (
+        {allSkills.length > 0 && (
           <div>
             {sectionMarker('Skills')}
-            {skills.map((cat) => (
-              <div key={cat.id} style={{ marginBottom: '10px' }}>
-                {cat.category && (
-                  <div
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', alignItems: 'center' }}>
+              {allSkills.map((skill, i) => {
+                const sizes = ['9px', '10px', '9.5px', '8.5px']
+                const paddings = ['3px 10px', '4px 12px', '3px 8px', '5px 14px']
+                const borders = [
+                  `1.5px solid ${themeColor}`,
+                  `1.5px solid ${medTint}`,
+                  `1.5px solid ${themeColor}`,
+                  `1.5px dashed ${themeColor}`,
+                ]
+                return (
+                  <span
+                    key={i}
                     style={{
-                      fontWeight: 700,
-                      fontSize: '9.5px',
-                      color: darkenColor(themeColor, 0.1),
-                      marginBottom: '5px',
-                      letterSpacing: '1px',
-                      textTransform: 'uppercase' as const,
+                      display: 'inline-block',
+                      padding: paddings[i % 4],
+                      fontSize: sizes[i % 4],
+                      fontWeight: i % 3 === 0 ? 700 : 500,
+                      color: i % 2 === 0 ? themeColor : darkenColor(themeColor, 0.15),
+                      border: borders[i % 4],
+                      borderRadius: i % 3 === 0 ? '0' : i % 3 === 1 ? '12px' : '4px',
+                      backgroundColor: i % 2 === 0 ? 'transparent' : lightTint,
+                      transform: i % 5 === 0 ? 'rotate(-1deg)' : i % 5 === 3 ? 'rotate(1deg)' : 'none',
                     }}
                   >
-                    {cat.category}
-                  </div>
-                )}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', alignItems: 'center' }}>
-                  {cat.items.map((item, i) => {
-                    const sizes = ['9px', '10px', '9.5px', '8.5px']
-                    const paddings = ['3px 10px', '4px 12px', '3px 8px', '5px 14px']
-                    const borders = [
-                      `1.5px solid ${themeColor}`,
-                      `1.5px solid ${medTint}`,
-                      `1.5px solid ${themeColor}`,
-                      `1.5px dashed ${themeColor}`,
-                    ]
-                    return (
-                      <span
-                        key={i}
-                        style={{
-                          display: 'inline-block',
-                          padding: paddings[i % 4],
-                          fontSize: sizes[i % 4],
-                          fontWeight: i % 3 === 0 ? 700 : 500,
-                          color: i % 2 === 0 ? themeColor : darkenColor(themeColor, 0.15),
-                          border: borders[i % 4],
-                          borderRadius: i % 3 === 0 ? '0' : i % 3 === 1 ? '12px' : '4px',
-                          backgroundColor: i % 2 === 0 ? 'transparent' : lightTint,
-                          transform: i % 5 === 0 ? 'rotate(-1deg)' : i % 5 === 3 ? 'rotate(1deg)' : 'none',
-                        }}
-                      >
-                        {item}
-                      </span>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
+                    {skill}
+                  </span>
+                )
+              })}
+            </div>
           </div>
         )}
 

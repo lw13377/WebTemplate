@@ -4,6 +4,7 @@ import { hexToRgb, lightenColor, darkenColor, pageContainerStyle } from '@/compo
 
 export default function VibrantTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const { r, g, b } = hexToRgb(themeColor)
   const tintBg = lightenColor(themeColor, 0.92)
@@ -282,7 +283,7 @@ export default function VibrantTemplate({ content, themeColor, fontFamily }: Tem
         })()}
 
         {/* Skills */}
-        {skills.length > 0 && (() => {
+        {allSkills.length > 0 && (() => {
           const bg = getSectionBg()
           return (
             <div style={sectionStyle(bg)}>
@@ -290,36 +291,27 @@ export default function VibrantTemplate({ content, themeColor, fontFamily }: Tem
                 <div style={dotDecor} />
                 Skills
               </h2>
-              {skills.map((cat) => (
-                <div key={cat.id} style={{ marginBottom: '10px' }}>
-                  {cat.category && (
-                    <div style={{ fontWeight: 700, fontSize: '10px', color: darkAccent, marginBottom: '5px' }}>
-                      {cat.category}
-                    </div>
-                  )}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                    {cat.items.map((item, i) => {
-                      const opacity = 0.15 + (i % 4) * 0.1
-                      return (
-                        <span
-                          key={i}
-                          style={{
-                            display: 'inline-block',
-                            padding: '4px 12px',
-                            borderRadius: '16px',
-                            fontSize: '9px',
-                            fontWeight: 600,
-                            backgroundColor: `rgba(${r}, ${g}, ${b}, ${opacity})`,
-                            color: darkenColor(themeColor, 0.2),
-                          }}
-                        >
-                          {item}
-                        </span>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {allSkills.map((skill, i) => {
+                  const opacity = 0.15 + (i % 4) * 0.1
+                  return (
+                    <span
+                      key={i}
+                      style={{
+                        display: 'inline-block',
+                        padding: '4px 12px',
+                        borderRadius: '16px',
+                        fontSize: '9px',
+                        fontWeight: 600,
+                        backgroundColor: `rgba(${r}, ${g}, ${b}, ${opacity})`,
+                        color: darkenColor(themeColor, 0.2),
+                      }}
+                    >
+                      {skill}
+                    </span>
+                  )
+                })}
+              </div>
             </div>
           )
         })()}

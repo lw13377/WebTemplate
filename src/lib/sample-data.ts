@@ -45,9 +45,7 @@ export const SAMPLE_RESUME: ResumeContent = {
     },
   ],
   skills: [
-    { id: '1', category: 'Languages', items: ['TypeScript', 'Python', 'Go', 'SQL'] },
-    { id: '2', category: 'Frameworks', items: ['React', 'Next.js', 'Node.js', 'FastAPI'] },
-    { id: '3', category: 'Tools', items: ['AWS', 'Docker', 'PostgreSQL', 'Redis'] },
+    { id: '1', category: '', items: ['TypeScript', 'Python', 'Go', 'SQL', 'React', 'Next.js', 'Node.js', 'FastAPI', 'AWS', 'Docker', 'PostgreSQL', 'Redis'] },
   ],
   projects: [
     {

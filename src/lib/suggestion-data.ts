@@ -675,6 +675,49 @@ export const SUMMARY_TEMPLATES_BY_JOB: Record<string, string[]> = {
   ],
 }
 
+// ── Year Estimation ──────────────────────────────────────────────────────────
+
+import type { Experience } from '@/types/resume'
+
+const MONTH_MAP: Record<string, number> = {
+  jan: 0, january: 0, feb: 1, february: 1, mar: 2, march: 2,
+  apr: 3, april: 3, may: 4, jun: 5, june: 5,
+  jul: 6, july: 6, aug: 7, august: 7, sep: 8, september: 8,
+  oct: 9, october: 9, nov: 10, november: 10, dec: 11, december: 11,
+}
+
+function parseDateToMs(dateStr: string): number | null {
+  if (!dateStr) return null
+  const lower = dateStr.toLowerCase().trim()
+  if (lower === 'present' || lower === 'current') return Date.now()
+  // Try "Mon YYYY" or "Month YYYY"
+  const parts = lower.split(/[\s,/]+/)
+  for (const part of parts) {
+    if (MONTH_MAP[part] !== undefined) {
+      const yearPart = parts.find((p) => /^\d{4}$/.test(p))
+      if (yearPart) return new Date(parseInt(yearPart), MONTH_MAP[part]).getTime()
+    }
+  }
+  // Try just year
+  const yearMatch = lower.match(/\d{4}/)
+  if (yearMatch) return new Date(parseInt(yearMatch[0]), 0).getTime()
+  return null
+}
+
+export function estimateYearsOfExperience(experience: Experience[]): string {
+  let totalMs = 0
+  for (const exp of experience) {
+    const start = parseDateToMs(exp.startDate)
+    const end = parseDateToMs(exp.endDate)
+    if (start && end && end > start) {
+      totalMs += end - start
+    }
+  }
+  const years = Math.round(totalMs / (365.25 * 24 * 60 * 60 * 1000))
+  if (years <= 0) return '1'
+  return `${years}+`
+}
+
 // ── Lookup Functions with Fuzzy Matching ─────────────────────────────────────
 
 function fuzzyLookup<T>(

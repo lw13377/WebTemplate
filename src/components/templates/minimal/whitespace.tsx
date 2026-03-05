@@ -4,6 +4,7 @@ import { pageContainerStyle } from '@/components/templates/base-styles'
 
 export default function WhitespaceTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const contactParts: string[] = []
   if (personal.email) contactParts.push(personal.email)
@@ -130,17 +131,12 @@ export default function WhitespaceTemplate({ content, themeColor, fontFamily }: 
       )}
 
       {/* Skills */}
-      {skills.length > 0 && (
+      {allSkills.length > 0 && (
         <div>
           <h2 style={sectionHeadingStyle}>Skills</h2>
-          {skills.map((cat) => (
-            <div key={cat.id} style={{ marginBottom: '8px' }}>
-              {cat.category && (
-                <span style={{ fontWeight: 600, color: '#1a1a1a' }}>{cat.category}: </span>
-              )}
-              <span style={{ color: '#555' }}>{cat.items.join(', ')}</span>
-            </div>
-          ))}
+          <div style={{ color: '#555' }}>
+            {allSkills.join(', ')}
+          </div>
         </div>
       )}
 

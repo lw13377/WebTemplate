@@ -196,21 +196,12 @@ export function PdfResumeDocument({ content, themeColor }: PdfTemplateProps) {
         )}
 
         {/* Skills */}
-        {skills.length > 0 && (
+        {skills.flatMap(s => s.items).length > 0 && (
           <View>
             <Text style={styles.sectionHeading}>Skills</Text>
-            {skills.map((cat) => (
-              <View key={cat.id} style={styles.skillRow}>
-                {cat.category ? (
-                  <Text>
-                    <Text style={styles.skillCategory}>{cat.category}: </Text>
-                    <Text style={styles.text}>{cat.items.join(', ')}</Text>
-                  </Text>
-                ) : (
-                  <Text style={styles.text}>{cat.items.join(', ')}</Text>
-                )}
-              </View>
-            ))}
+            <View style={styles.skillRow}>
+              <Text style={styles.text}>{skills.flatMap(s => s.items).join(', ')}</Text>
+            </View>
           </View>
         )}
 

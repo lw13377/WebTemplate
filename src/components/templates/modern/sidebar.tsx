@@ -4,6 +4,7 @@ import { lightenColor, pageContainerStyle, PAGE_HEIGHT } from '../base-styles'
 
 export default function SidebarTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const sidebarWidth = '35%'
   const mainWidth = '65%'
@@ -128,35 +129,26 @@ export default function SidebarTemplate({ content, themeColor, fontFamily }: Tem
         )}
 
         {/* Skills on sidebar */}
-        {skills.length > 0 && (
+        {allSkills.length > 0 && (
           <div>
             <h2 style={sidebarSectionTitle}>Skills</h2>
-            {skills.map((cat) => (
-              <div key={cat.id} style={{ marginBottom: '10px' }}>
-                {cat.category && (
-                  <div style={{ fontWeight: 600, fontSize: '9.5px', color: 'rgba(255,255,255,0.8)', marginBottom: '4px' }}>
-                    {cat.category}
-                  </div>
-                )}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                  {cat.items.map((item, i) => (
-                    <span
-                      key={i}
-                      style={{
-                        display: 'inline-block',
-                        padding: '2px 8px',
-                        borderRadius: '3px',
-                        fontSize: '8.5px',
-                        backgroundColor: 'rgba(255,255,255,0.15)',
-                        color: '#ffffff',
-                      }}
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+              {allSkills.map((skill, i) => (
+                <span
+                  key={i}
+                  style={{
+                    display: 'inline-block',
+                    padding: '2px 8px',
+                    borderRadius: '3px',
+                    fontSize: '8.5px',
+                    backgroundColor: 'rgba(255,255,255,0.15)',
+                    color: '#ffffff',
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
           </div>
         )}
 

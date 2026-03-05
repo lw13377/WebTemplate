@@ -1,10 +1,8 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
-import { Lightbulb, Plus, Trash2, Wrench } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { useCallback, useMemo, useState, useRef, type KeyboardEvent } from 'react'
+import { Lightbulb, Plus, Wrench, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useResume } from '@/hooks/use-resume'
 import { getSkillsForJob } from '@/lib/suggestion-data'
 import type { SkillCategory } from '@/types/resume'
@@ -12,158 +10,129 @@ import { CollapsibleSection } from './collapsible-section'
 
 export function SkillsForm() {
   const { content, updateContent } = useResume()
-  const skills = content.skills
+  const [inputValue, setInputValue] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const addSkill = useCallback(() => {
-    const newEntry: SkillCategory = {
-      id: crypto.randomUUID(),
-      category: '',
-      items: [],
+  // Flatten all skill categories into one flat list
+  const allSkills = useMemo(
+    () => content.skills.flatMap((s) => s.items),
+    [content.skills]
+  )
+
+  const setSkills = useCallback(
+    (items: string[]) => {
+      const entry: SkillCategory = {
+        id: content.skills[0]?.id || crypto.randomUUID(),
+        category: '',
+        items,
+      }
+      updateContent('skills', [entry])
+    },
+    [content.skills, updateContent]
+  )
+
+  // Migrate: flatten on first render if multiple categories exist
+  useMemo(() => {
+    if (content.skills.length > 1) {
+      const flat = content.skills.flatMap((s) => s.items)
+      const entry: SkillCategory = {
+        id: content.skills[0].id,
+        category: '',
+        items: flat,
+      }
+      updateContent('skills', [entry])
     }
-    updateContent('skills', [...skills, newEntry])
-  }, [skills, updateContent])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const addSkill = useCallback(
+    (skill: string) => {
+      const trimmed = skill.trim()
+      if (!trimmed || allSkills.some((s) => s.toLowerCase() === trimmed.toLowerCase())) return
+      setSkills([...allSkills, trimmed])
+    },
+    [allSkills, setSkills]
+  )
 
   const removeSkill = useCallback(
-    (id: string) => {
-      updateContent(
-        'skills',
-        skills.filter((s) => s.id !== id)
-      )
+    (index: number) => {
+      setSkills(allSkills.filter((_, i) => i !== index))
     },
-    [skills, updateContent]
+    [allSkills, setSkills]
   )
 
-  const updateSkillCategory = useCallback(
-    (id: string, category: string) => {
-      updateContent(
-        'skills',
-        skills.map((s) => (s.id === id ? { ...s, category } : s))
-      )
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        addSkill(inputValue)
+        setInputValue('')
+      } else if (e.key === 'Backspace' && inputValue === '' && allSkills.length > 0) {
+        removeSkill(allSkills.length - 1)
+      }
     },
-    [skills, updateContent]
+    [inputValue, addSkill, removeSkill, allSkills.length]
   )
 
-  const updateSkillItems = useCallback(
-    (id: string, itemsStr: string) => {
-      const items = itemsStr
-        .split(',')
-        .map((item) => item.trim())
-        .filter(Boolean)
-      updateContent(
-        'skills',
-        skills.map((s) => (s.id === id ? { ...s, items } : s))
-      )
-    },
-    [skills, updateContent]
-  )
-
-  // Compute suggested skills from all experience job titles
+  // Suggested skills from experience job titles
   const suggestedSkills = useMemo(() => {
-    const allExisting = new Set(
-      skills.flatMap((s) => s.items.map((i) => i.toLowerCase()))
-    )
+    const existing = new Set(allSkills.map((s) => s.toLowerCase()))
     const suggested = new Set<string>()
     for (const exp of content.experience) {
       if (!exp.title) continue
       for (const skill of getSkillsForJob(exp.title)) {
-        if (!allExisting.has(skill.toLowerCase())) {
+        if (!existing.has(skill.toLowerCase())) {
           suggested.add(skill)
         }
       }
     }
     return Array.from(suggested)
-  }, [content.experience, skills])
-
-  const addSuggestedSkill = useCallback(
-    (skillName: string) => {
-      if (skills.length === 0) {
-        // Create a new category
-        const newEntry: SkillCategory = {
-          id: crypto.randomUUID(),
-          category: 'Skills',
-          items: [skillName],
-        }
-        updateContent('skills', [newEntry])
-      } else {
-        // Add to first category
-        updateContent(
-          'skills',
-          skills.map((s, i) =>
-            i === 0 ? { ...s, items: [...s.items, skillName] } : s
-          )
-        )
-      }
-    },
-    [skills, updateContent]
-  )
+  }, [content.experience, allSkills])
 
   return (
     <CollapsibleSection
       title="Skills"
       icon={<Wrench className="h-4 w-4" />}
     >
-      {skills.length === 0 ? (
-        <div className="flex flex-col items-center rounded-lg border border-dashed py-8">
-          <p className="mb-3 text-sm text-muted-foreground">
-            No skill categories yet
-          </p>
-          <Button variant="outline" size="sm" onClick={addSkill}>
-            <Plus className="h-4 w-4" />
-            Add Skill Category
-          </Button>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {skills.map((skill, index) => (
-            <div
-              key={skill.id}
-              className="relative rounded-lg border bg-background p-4"
+      <div className="space-y-3">
+        {/* Tag input area */}
+        <div
+          className="flex min-h-[42px] flex-wrap items-center gap-1.5 rounded-md border bg-background px-3 py-2 focus-within:ring-2 focus-within:ring-ring cursor-text"
+          onClick={() => inputRef.current?.focus()}
+        >
+          {allSkills.map((skill, index) => (
+            <span
+              key={`${skill}-${index}`}
+              className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary transition-all animate-in fade-in slide-in-from-left-1 duration-200"
             >
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">
-                  Category {index + 1}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  onClick={() => removeSkill(skill.id)}
-                  className="text-muted-foreground hover:text-destructive"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label>Category Name</Label>
-                  <Input
-                    value={skill.category}
-                    onChange={(e) =>
-                      updateSkillCategory(skill.id, e.target.value)
-                    }
-                    placeholder="Programming Languages"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Skills (comma-separated)</Label>
-                  <Input
-                    value={skill.items.join(', ')}
-                    onChange={(e) =>
-                      updateSkillItems(skill.id, e.target.value)
-                    }
-                    placeholder="JavaScript, TypeScript, Python"
-                  />
-                </div>
-              </div>
-            </div>
+              {skill}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  removeSkill(index)
+                }}
+                className="ml-0.5 rounded-full p-0.5 hover:bg-primary/20 transition-colors"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
           ))}
-
-          <Button variant="outline" size="sm" onClick={addSkill}>
-            <Plus className="h-4 w-4" />
-            Add Skill Category
-          </Button>
+          <Input
+            ref={inputRef}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={allSkills.length === 0 ? 'Type a skill + Enter' : 'Add more...'}
+            className="h-7 min-w-[120px] flex-1 border-0 bg-transparent p-0 shadow-none focus-visible:ring-0"
+          />
         </div>
-      )}
+
+        {allSkills.length > 0 && (
+          <p className="text-xs text-muted-foreground">
+            {allSkills.length} skill{allSkills.length !== 1 ? 's' : ''} added
+          </p>
+        )}
+      </div>
 
       {/* Suggested Skills */}
       {suggestedSkills.length > 0 && (
@@ -177,7 +146,7 @@ export function SkillsForm() {
               <button
                 key={skill}
                 type="button"
-                onClick={() => addSuggestedSkill(skill)}
+                onClick={() => addSkill(skill)}
                 className="inline-flex items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-xs font-medium transition-colors hover:bg-accent"
               >
                 <Plus className="h-3 w-3" />

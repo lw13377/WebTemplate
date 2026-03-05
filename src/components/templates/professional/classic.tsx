@@ -4,6 +4,7 @@ import { pageContainerStyle } from '../base-styles'
 
 export default function ClassicTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const contactParts: string[] = []
   if (personal.email) contactParts.push(personal.email)
@@ -141,17 +142,12 @@ export default function ClassicTemplate({ content, themeColor, fontFamily }: Tem
       )}
 
       {/* Skills */}
-      {skills.length > 0 && (
+      {allSkills.length > 0 && (
         <div>
           <h2 style={sectionHeadingStyle}>Skills</h2>
-          {skills.map((cat) => (
-            <div key={cat.id} style={{ marginTop: '6px' }}>
-              {cat.category && (
-                <span style={{ fontWeight: 700, color: '#1a1a1a' }}>{cat.category}: </span>
-              )}
-              <span style={{ color: '#333' }}>{cat.items.join(', ')}</span>
-            </div>
-          ))}
+          <div style={{ marginTop: '6px', color: '#333' }}>
+            {allSkills.join(', ')}
+          </div>
         </div>
       )}
 

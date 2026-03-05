@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Templates | ResumeForge',
-  description: 'Browse 20 professionally designed resume templates across 4 categories',
+  description: 'Browse 50 professionally designed resume templates across 4 categories',
 }
 
 export default async function TemplatesPage({
@@ -27,7 +27,7 @@ export default async function TemplatesPage({
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
             {selectMode
               ? 'Pick a template to start your resume. You can always change it later.'
-              : 'Choose from 20 professionally designed templates. Customize colors, fonts, and content to make it yours.'}
+              : 'Choose from 50 professionally designed templates. Customize colors, fonts, and content to make it yours.'}
           </p>
         </div>
         <TemplateGallery />

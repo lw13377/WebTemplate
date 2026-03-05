@@ -4,6 +4,7 @@ import { lightenColor, pageContainerStyle } from '../base-styles'
 
 export default function TimelineTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const sectionHeadingStyle: React.CSSProperties = {
     fontSize: '12px',
@@ -219,23 +220,14 @@ export default function TimelineTemplate({ content, themeColor, fontFamily }: Te
       )}
 
       {/* Skills grid of tags */}
-      {skills.length > 0 && (
+      {allSkills.length > 0 && (
         <div>
           <h2 style={sectionHeadingStyle}>Skills</h2>
-          {skills.map((cat) => (
-            <div key={cat.id} style={{ marginBottom: '8px' }}>
-              {cat.category && (
-                <div style={{ fontWeight: 600, fontSize: '10px', color: '#333', marginBottom: '4px' }}>
-                  {cat.category}
-                </div>
-              )}
-              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {cat.items.map((item, i) => (
-                  <span key={i} style={skillTagStyle}>{item}</span>
-                ))}
-              </div>
-            </div>
-          ))}
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            {allSkills.map((skill, i) => (
+              <span key={i} style={skillTagStyle}>{skill}</span>
+            ))}
+          </div>
         </div>
       )}
 

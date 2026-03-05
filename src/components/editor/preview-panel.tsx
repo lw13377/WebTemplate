@@ -35,6 +35,20 @@ export function PreviewPanel() {
 
   const effectiveScale = autoScale * zoom
 
+  // Fade transition on template switch
+  const [fadeKey, setFadeKey] = useState(templateId)
+  const [opacity, setOpacity] = useState(1)
+  useEffect(() => {
+    if (templateId !== fadeKey) {
+      setOpacity(0)
+      const timer = setTimeout(() => {
+        setFadeKey(templateId)
+        setOpacity(1)
+      }, 150)
+      return () => clearTimeout(timer)
+    }
+  }, [templateId, fadeKey])
+
   return (
     <div className="flex h-full flex-col">
       {/* Zoom Controls */}
@@ -97,8 +111,9 @@ export function PreviewPanel() {
             transformOrigin: 'top center',
             width: `${PAGE_WIDTH}px`,
             minHeight: `${PAGE_HEIGHT}px`,
+            opacity,
           }}
-          className="shadow-xl"
+          className="shadow-xl transition-opacity duration-200"
         >
           <TemplateRenderer
             templateId={templateId}

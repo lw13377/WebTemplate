@@ -5,19 +5,20 @@ import Link from 'next/link'
 import {
   ArrowLeft,
   Check,
+  ChevronRight,
   CloudOff,
   Download,
+  LayoutGrid,
   Loader2,
 } from 'lucide-react'
 import { DownloadModal } from './download-modal'
+import { TemplateDrawer } from './template-drawer'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
@@ -27,51 +28,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useResume } from '@/hooks/use-resume'
+import { TEMPLATES } from '@/components/templates/template-registry'
 import { FONT_OPTIONS, COLOR_PRESETS } from '@/types/resume'
 import { cn } from '@/lib/utils'
-
-const TEMPLATE_GROUPS = [
-  {
-    label: 'Professional',
-    templates: [
-      { id: 'professional-classic', name: 'Classic' },
-      { id: 'professional-executive', name: 'Executive' },
-      { id: 'professional-corporate', name: 'Corporate' },
-      { id: 'professional-formal', name: 'Formal' },
-      { id: 'professional-traditional', name: 'Traditional' },
-    ],
-  },
-  {
-    label: 'Modern',
-    templates: [
-      { id: 'modern-sleek', name: 'Sleek' },
-      { id: 'modern-gradient', name: 'Gradient' },
-      { id: 'modern-sidebar', name: 'Sidebar' },
-      { id: 'modern-timeline', name: 'Timeline' },
-      { id: 'modern-grid', name: 'Grid' },
-    ],
-  },
-  {
-    label: 'Creative',
-    templates: [
-      { id: 'creative-vibrant', name: 'Vibrant' },
-      { id: 'creative-artistic', name: 'Artistic' },
-      { id: 'creative-bold', name: 'Bold' },
-      { id: 'creative-asymmetric', name: 'Asymmetric' },
-      { id: 'creative-portfolio', name: 'Portfolio' },
-    ],
-  },
-  {
-    label: 'Minimal',
-    templates: [
-      { id: 'minimal-clean', name: 'Clean' },
-      { id: 'minimal-whitespace', name: 'Whitespace' },
-      { id: 'minimal-simple', name: 'Simple' },
-      { id: 'minimal-elegant', name: 'Elegant' },
-      { id: 'minimal-refined', name: 'Refined' },
-    ],
-  },
-]
 
 function SaveIndicator({ status }: { status: string }) {
   switch (status) {
@@ -109,12 +68,14 @@ export function Toolbar() {
     fontFamily,
     saveStatus,
     setTitle,
-    setTemplateId,
     setThemeColor,
     setFontFamily,
   } = useResume()
 
   const [showDownload, setShowDownload] = useState(false)
+  const [showTemplates, setShowTemplates] = useState(false)
+
+  const currentTemplate = TEMPLATES.find((t) => t.id === templateId)
 
   return (
     <div className="border-b bg-background">
@@ -152,24 +113,19 @@ export function Toolbar() {
 
       {/* Bottom row: template, font, color swatches */}
       <div className="flex flex-wrap items-center gap-2 border-t px-4 py-2">
-        {/* Template Selector */}
-        <Select value={templateId} onValueChange={setTemplateId}>
-          <SelectTrigger size="sm" className="w-[180px]">
-            <SelectValue placeholder="Select template" />
-          </SelectTrigger>
-          <SelectContent>
-            {TEMPLATE_GROUPS.map((group) => (
-              <SelectGroup key={group.label}>
-                <SelectLabel>{group.label}</SelectLabel>
-                {group.templates.map((tpl) => (
-                  <SelectItem key={tpl.id} value={tpl.id}>
-                    {tpl.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* Template Picker Button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowTemplates(true)}
+          className="gap-1.5"
+        >
+          <LayoutGrid className="h-4 w-4" />
+          {currentTemplate?.name || 'Template'}
+          <ChevronRight className="h-3 w-3 text-muted-foreground" />
+        </Button>
+
+        <TemplateDrawer open={showTemplates} onOpenChange={setShowTemplates} />
 
         {/* Font Selector */}
         <Select value={fontFamily} onValueChange={setFontFamily}>

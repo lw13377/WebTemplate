@@ -4,6 +4,7 @@ import { hexToRgb, lightenColor, darkenColor, pageContainerStyle, PAGE_HEIGHT } 
 
 export default function AsymmetricTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const { r, g, b } = hexToRgb(themeColor)
   const lightTint = lightenColor(themeColor, 0.9)
@@ -148,43 +149,25 @@ export default function AsymmetricTemplate({ content, themeColor, fontFamily }: 
         )}
 
         {/* Skills on left */}
-        {skills.length > 0 && (
+        {allSkills.length > 0 && (
           <div>
             {leftSectionHeading('Skills')}
-            {skills.map((cat) => (
-              <div key={cat.id} style={{ marginBottom: '10px' }}>
-                {cat.category && (
-                  <div
-                    style={{
-                      fontWeight: 700,
-                      fontSize: '9px',
-                      color: 'rgba(255,255,255,0.65)',
-                      marginBottom: '4px',
-                      textTransform: 'uppercase' as const,
-                      letterSpacing: '1px',
-                    }}
-                  >
-                    {cat.category}
-                  </div>
-                )}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                  {cat.items.map((item, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        fontSize: '8.5px',
-                        color: '#ffffff',
-                        padding: '3px 8px',
-                        backgroundColor: `rgba(255,255,255,${0.08 + (i % 3) * 0.05})`,
-                        borderRadius: '3px',
-                      }}
-                    >
-                      {item}
-                    </div>
-                  ))}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+              {allSkills.map((skill, i) => (
+                <div
+                  key={i}
+                  style={{
+                    fontSize: '8.5px',
+                    color: '#ffffff',
+                    padding: '3px 8px',
+                    backgroundColor: `rgba(255,255,255,${0.08 + (i % 3) * 0.05})`,
+                    borderRadius: '3px',
+                  }}
+                >
+                  {skill}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 

@@ -4,6 +4,7 @@ import { hexToRgb, lightenColor, darkenColor, pageContainerStyle } from '@/compo
 
 export default function BoldTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const { r, g, b } = hexToRgb(themeColor)
   const lightTint = lightenColor(themeColor, 0.88)
@@ -259,45 +260,27 @@ export default function BoldTemplate({ content, themeColor, fontFamily }: Templa
         )}
 
         {/* Skills */}
-        {skills.length > 0 && (
+        {allSkills.length > 0 && (
           <div>
             {sectionHeading('Skills')}
-            {skills.map((cat) => (
-              <div key={cat.id} style={{ marginBottom: '10px' }}>
-                {cat.category && (
-                  <div
-                    style={{
-                      fontWeight: 900,
-                      fontSize: '11px',
-                      color: darkenColor(themeColor, 0.1),
-                      marginBottom: '6px',
-                      textTransform: 'uppercase' as const,
-                      letterSpacing: '1px',
-                    }}
-                  >
-                    {cat.category}
-                  </div>
-                )}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                  {cat.items.map((item, i) => (
-                    <span
-                      key={i}
-                      style={{
-                        display: 'inline-block',
-                        padding: '5px 14px',
-                        fontSize: '10px',
-                        fontWeight: 700,
-                        color: themeColor,
-                        backgroundColor: lightTint,
-                        borderLeft: `3px solid ${themeColor}`,
-                      }}
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+              {allSkills.map((skill, i) => (
+                <span
+                  key={i}
+                  style={{
+                    display: 'inline-block',
+                    padding: '5px 14px',
+                    fontSize: '10px',
+                    fontWeight: 700,
+                    color: themeColor,
+                    backgroundColor: lightTint,
+                    borderLeft: `3px solid ${themeColor}`,
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
           </div>
         )}
 

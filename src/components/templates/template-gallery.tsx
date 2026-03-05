@@ -114,6 +114,13 @@ function TemplateCard({ template }: { template: TemplateInfo }) {
         </div>
       </div>
 
+      {/* New badge */}
+      {template.isNew && (
+        <div className="absolute top-2 right-2 z-10 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-sm">
+          New
+        </div>
+      )}
+
       {/* Info */}
       <div className="mt-3">
         <h3 className="text-sm font-semibold">{template.name}</h3>

@@ -4,6 +4,7 @@ import { lightenColor, pageContainerStyle } from '../base-styles'
 
 export default function ExecutiveTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
 
   const sectionHeadingStyle: React.CSSProperties = {
     fontSize: '13px',
@@ -193,25 +194,16 @@ export default function ExecutiveTemplate({ content, themeColor, fontFamily }: T
         )}
 
         {/* Skills - displayed as inline tags */}
-        {skills.length > 0 && (
+        {allSkills.length > 0 && (
           <div>
             <h2 style={sectionHeadingStyle}>Skills</h2>
-            {skills.map((cat) => (
-              <div key={cat.id} style={{ marginBottom: '8px' }}>
-                {cat.category && (
-                  <div style={{ fontWeight: 600, fontSize: '10.5px', color: '#1a1a1a', marginBottom: '4px' }}>
-                    {cat.category}
-                  </div>
-                )}
-                <div>
-                  {cat.items.map((item, idx) => (
-                    <span key={idx} style={tagStyle}>
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+              {allSkills.map((skill, i) => (
+                <span key={i} style={tagStyle}>
+                  {skill}
+                </span>
+              ))}
+            </div>
           </div>
         )}
 

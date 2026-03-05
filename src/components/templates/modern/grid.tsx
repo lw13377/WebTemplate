@@ -4,6 +4,7 @@ import { hexToRgb, lightenColor, pageContainerStyle } from '../base-styles'
 
 export default function GridTemplate({ content, themeColor, fontFamily }: TemplateProps) {
   const { personal, summary, experience, education, skills, projects, certifications, languages } = content
+  const allSkills = skills.flatMap(s => s.items)
   const rgb = hexToRgb(themeColor)
 
   const sectionHeadingStyle: React.CSSProperties = {
@@ -188,24 +189,15 @@ export default function GridTemplate({ content, themeColor, fontFamily }: Templa
         )}
 
         {/* Skills as chip grid */}
-        {skills.length > 0 && (
+        {allSkills.length > 0 && (
           <div style={{ marginBottom: '6px' }}>
             <h2 style={sectionHeadingStyle}>Skills</h2>
             <div style={cardStyle}>
-              {skills.map((cat) => (
-                <div key={cat.id} style={{ marginBottom: '8px' }}>
-                  {cat.category && (
-                    <div style={{ fontWeight: 600, fontSize: '9.5px', color: '#333', marginBottom: '4px' }}>
-                      {cat.category}
-                    </div>
-                  )}
-                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                    {cat.items.map((item, i) => (
-                      <span key={i} style={chipStyle}>{item}</span>
-                    ))}
-                  </div>
-                </div>
-              ))}
+              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                {allSkills.map((skill, i) => (
+                  <span key={i} style={chipStyle}>{skill}</span>
+                ))}
+              </div>
             </div>
           </div>
         )}

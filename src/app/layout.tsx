@@ -17,10 +17,10 @@ const sourceSerif = Source_Serif_4({ subsets: ["latin"], variable: "--font-sourc
 
 export const metadata: Metadata = {
   title: "ResumeForge — Build Professional Resumes in Minutes",
-  description: "Create stunning resumes with 20 professionally designed templates. Customize colors, fonts, and content. Download as PDF.",
+  description: "Create stunning resumes with 50 professionally designed templates. Customize colors, fonts, and content. Download as PDF.",
   openGraph: {
     title: "ResumeForge — Build Professional Resumes in Minutes",
-    description: "Create stunning resumes with 20 professionally designed templates.",
+    description: "Create stunning resumes with 50 professionally designed templates.",
     type: "website",
   },
 };

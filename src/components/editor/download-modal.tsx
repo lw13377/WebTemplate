@@ -109,7 +109,7 @@ export function DownloadModal({ open, onOpenChange }: DownloadModalProps) {
               </li>
               <li className="flex items-center gap-2">
                 <Sparkles className="h-3.5 w-3.5 text-primary" />
-                Access all 20 templates
+                Access all 50 templates
               </li>
               <li className="flex items-center gap-2">
                 <Sparkles className="h-3.5 w-3.5 text-primary" />
