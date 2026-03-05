@@ -139,30 +139,37 @@ export function DownloadModal({ open, onOpenChange }: DownloadModalProps) {
     }
   }
 
-  // Guest mode — prompt to create account
+  // Guest mode — prompt to upgrade to Pro
   if (mode === 'guest') {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5" />
-              Create an Account
+              <Sparkles className="h-5 w-5" />
+              Upgrade to Pro
             </DialogTitle>
             <DialogDescription>
-              Create a free account to save your resume and download it as a PDF.
+              PDF downloads are available on the Pro plan. Create an account and subscribe to get started.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 pt-2">
-            <div className="rounded-lg border bg-muted/30 p-4 text-center">
-              <p className="text-sm text-muted-foreground">
-                Your resume data will be saved. Sign up to unlock PDF downloads.
-              </p>
+            <div className="rounded-lg border bg-muted/30 p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold">Pro Plan</h3>
+                  <p className="text-sm text-muted-foreground">Unlimited PDF downloads</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-2xl font-bold">$2</span>
+                  <span className="text-sm text-muted-foreground">/mo</span>
+                </div>
+              </div>
             </div>
             <Button className="w-full" size="lg" asChild>
-              <Link href="/login?redirect=/editor/new">
-                <UserPlus className="h-4 w-4" />
-                Create Free Account
+              <Link href="/login">
+                <CreditCard className="h-4 w-4" />
+                Create Account & Subscribe
               </Link>
             </Button>
           </div>
