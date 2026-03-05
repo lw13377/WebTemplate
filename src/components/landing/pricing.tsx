@@ -32,7 +32,7 @@ const plans: PricingPlan[] = [
     description: "Everything you need to build your first resume",
     features: [
       { text: "Build unlimited resumes" },
-      { text: "50+ professional templates" },
+      { text: "Limited professional templates" },
       { text: "Live preview" },
       { text: "Color & font customization" },
     ],
@@ -47,9 +47,9 @@ const plans: PricingPlan[] = [
     description: "Export and share your resumes with the world",
     features: [
       { text: "Everything in Free" },
+      { text: "50+ professional templates" },
+      { text: "Removes watermark" },
       { text: "PDF download" },
-      { text: "Priority support" },
-      { text: "Early access to new templates" },
     ],
     cta: "Get Pro",
     href: "/login?redirect=/dashboard",
