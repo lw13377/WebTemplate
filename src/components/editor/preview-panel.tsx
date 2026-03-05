@@ -132,7 +132,7 @@ export function PreviewPanel() {
                 ? 'Saving...'
                 : saveStatus === 'saved' && !hasUnsavedChanges
                   ? 'Saved'
-                  : 'Save'}
+                  : 'Save Progress'}
             </span>
           </Button>
 

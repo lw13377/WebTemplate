@@ -1,16 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { Eye, FileText, LayoutGrid, PenLine } from 'lucide-react'
+import { Eye, FileText, FolderOpen, LayoutGrid, PenLine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Toolbar } from './toolbar'
 import { TemplateSidebar } from './template-strip'
 import { FormPanel } from './form-panel'
 import { PreviewPanel } from './preview-panel'
+import { SavedResumesPanel } from './saved-resumes-panel'
 
 export function EditorLayout() {
-  const [mobileView, setMobileView] = useState<'form' | 'preview' | 'templates'>('form')
+  const [mobileView, setMobileView] = useState<'form' | 'preview' | 'templates' | 'saved'>('form')
 
   return (
     <div className="flex h-screen flex-col">
@@ -55,6 +56,18 @@ export function EditorLayout() {
           <LayoutGrid className="h-4 w-4" />
           Templates
         </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            'flex-1 rounded-none',
+            mobileView === 'saved' && 'bg-background shadow-sm'
+          )}
+          onClick={() => setMobileView('saved')}
+        >
+          <FolderOpen className="h-4 w-4" />
+          Saved
+        </Button>
       </div>
 
       {/* Three-column split view */}
@@ -87,6 +100,16 @@ export function EditorLayout() {
           )}
         >
           <TemplateSidebar />
+        </div>
+
+        {/* Saved Resumes (mobile only) */}
+        <div
+          className={cn(
+            'w-full overflow-hidden',
+            mobileView !== 'saved' && 'hidden'
+          )}
+        >
+          <SavedResumesPanel />
         </div>
       </div>
 
