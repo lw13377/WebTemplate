@@ -62,6 +62,34 @@ export function PreviewPanel() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
 
+  // Block print and screenshot keyboard shortcuts for non-subscribers
+  useEffect(() => {
+    if (isSubscribed) return
+
+    // Block printing
+    const style = document.createElement('style')
+    style.textContent = '@media print { body { display: none !important; } }'
+    document.head.appendChild(style)
+
+    // Block common screenshot shortcuts
+    function handleKeyDown(e: KeyboardEvent) {
+      if (
+        e.key === 'PrintScreen' ||
+        (e.ctrlKey && e.shiftKey && e.key === 'S') ||
+        (e.ctrlKey && e.key === 'p')
+      ) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown, true)
+
+    return () => {
+      document.head.removeChild(style)
+      document.removeEventListener('keydown', handleKeyDown, true)
+    }
+  }, [isSubscribed])
+
   // Calculate scale to fit container — fills available space
   useEffect(() => {
     function calcScale() {
@@ -226,24 +254,27 @@ export function PreviewPanel() {
               fontFamily={fontFamily}
             />
           </div>
-          {/* Watermark for non-subscribers */}
+          {/* Watermark for non-subscribers — tiled pattern */}
           {!isSubscribed && (
             <div
-              className="pointer-events-none absolute inset-0 flex items-center justify-center"
-              style={{
-                transform: 'rotate(-30deg)',
-              }}
+              className="pointer-events-none absolute inset-0 select-none overflow-hidden"
+              style={{ transform: 'rotate(-25deg)', transformOrigin: 'center center' }}
             >
-              <span
-                className="select-none text-center font-bold uppercase tracking-widest"
-                style={{
-                  fontSize: '64px',
-                  color: 'rgba(0,0,0,0.06)',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                PREVIEW
-              </span>
+              <div className="flex flex-col items-center justify-center gap-16" style={{ width: '200%', height: '200%', marginLeft: '-50%', marginTop: '-30%' }}>
+                {Array.from({ length: 6 }).map((_, row) => (
+                  <div key={row} className="flex gap-12">
+                    {Array.from({ length: 4 }).map((_, col) => (
+                      <span
+                        key={col}
+                        className="font-bold uppercase tracking-widest"
+                        style={{ fontSize: '32px', color: 'rgba(0,0,0,0.07)', whiteSpace: 'nowrap' }}
+                      >
+                        PREVIEW ONLY
+                      </span>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
